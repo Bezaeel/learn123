@@ -14,10 +14,6 @@
 # Dependency directories
 vendor/
 
-# Go workspace files
-go.work
-go.work.sum
-
 # IDE specific files
 .vscode/
 .idea/
