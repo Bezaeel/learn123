@@ -15,6 +15,7 @@ var (
 )
 
 func AddInfrastucture() {
+
 	// wire infra dependencies
 	database.ConnectToDB(dbUser, dbPass, dbHost, dbPort, dbName)
 }

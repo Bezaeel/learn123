@@ -16,7 +16,7 @@ func NewCourseController(app *fiber.App, _courseService ICourseService) {
 	}
 
 	controller.Ask()
-	controller.CreateOrder()
+	controller.CreateCourse()
 }
 
 func (c *CourseController) Ask() {
@@ -25,7 +25,7 @@ func (c *CourseController) Ask() {
 	})
 }
 
-func (c *CourseController) CreateOrder() {
+func (c *CourseController) CreateCourse() {
 	c.router.Post("/new", func(ctx *fiber.Ctx) error {
 		p := new(CreateCourseCommand)
 		_ = ctx.BodyParser(p)
