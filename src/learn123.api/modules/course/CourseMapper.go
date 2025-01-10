@@ -1,13 +1,12 @@
 package course
 
 import (
-	"github.com/google/uuid"
 	courseV1 "learn123.api.client/contracts/course/v1"
 )
 
 func (command *CreateCourseCommand) ToEntity() *CourseEntity {
 	return &CourseEntity{
-		Id:   uuid.New(),
+		Id:   command.Id,
 		Name: command.Name,
 	}
 }

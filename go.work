@@ -6,4 +6,5 @@ use (
 	./src/learn123.datamigrator
 	./src/learn123.events
 	./src/learn123.infrastructure
+	./tests
 )

@@ -2,6 +2,7 @@ package course
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 )
 
 type CourseController struct {
@@ -28,6 +29,7 @@ func (c *CourseController) Ask() {
 func (c *CourseController) CreateCourse() {
 	c.router.Post("/new", func(ctx *fiber.Ctx) error {
 		p := new(CreateCourseCommand)
+		p.Id, _ = uuid.NewUUID()
 		_ = ctx.BodyParser(p)
 
 		result := c.courseService.CreateCourse(p)
