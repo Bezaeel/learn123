@@ -1,9 +1,9 @@
 package learn123infrastructure
 
 import (
-	_ "github.com/joho/godotenv/autoload"
 	ext "learn123.api/common/extensions"
 	"learn123.infrastructure/database"
+	"learn123.infrastructure/rmq"
 )
 
 var (
@@ -15,7 +15,7 @@ var (
 )
 
 func AddInfrastucture() {
-
-	// wire infra dependencies
+	// Wire infra dependencies
 	database.ConnectToDB(dbUser, dbPass, dbHost, dbPort, dbName)
+	rmq.ConnectAmqp()
 }
