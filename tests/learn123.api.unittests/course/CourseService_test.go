@@ -23,7 +23,7 @@ func TestCourseServiceShouldTestSuite(t *testing.T) {
 
 func (uts *CourseServiceShould) SetupTest() {
 	uts.testDbContext = tests.SetUp()
-	uts.sut = *course.NewCourseService(uts.testDbContext)
+	uts.sut = *course.NewCourseService(uts.testDbContext, nil)
 }
 
 func (uts *CourseServiceShould) Test_CreateCourse_ShouldCreateCourse_WhenCommandIsValid() {

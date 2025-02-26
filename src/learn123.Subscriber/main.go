@@ -1,66 +1,49 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
+	"context"
 	"log/slog"
 	"os"
-
-	event "learn123.events"
+	"os/signal"
+	"syscall"
 	"learn123.infrastructure/rmq"
+	"learn123.subscriber/HandleCourseCreated"
+	"learn123.subscriber/HandleCourseCreated2"
+	"learn123.subscriber/HandleOrderCreated"
 )
 
 func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
-	slog.SetDefault(logger)
 
+	// Setup RabbitMQ connection
 	rmq.ConnectAmqp()
-	logger.Info("Subscriber started")
-	queue, _ := rmq.Channel.QueueDeclare(
-		"learn123.CourseCreated", // name
-		false,                    // durable
-		false,                    // delete when unused
-		false,                    // exclusive
-		false,                    // no-wait
-		nil,                      // arguments
-	)
 
-	_ = rmq.Channel.QueueBind(
-		queue.Name, // queue name
-		"",         // routing key
-		"learn123", // exchange
-		false,
-		nil,
-	)
+	// Create context that listens for the interrupt signal from the OS
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
 
-	msgs, err := rmq.Channel.Consume(
-		queue.Name, // queue
-		"",         // consumer
-		true,       // auto ack
-		false,      // exclusive
-		false,      // no local
-		false,      // no wait
-		nil,        //args
-	)
-	if err != nil {
-		panic(err)
+	// Initialize and start consumers
+	courseCreatedConsumer := HandleCourseCreated.NewCourseCreatedConsumer(logger)
+	if err := courseCreatedConsumer.Start(ctx, rmq.Channel); err != nil {
+		logger.Error("Failed to start course created consumer", "error", err)
+		os.Exit(1)
 	}
 
-	// print consumed messages from queue
-	forever := make(chan bool)
-	go func() {
-		for msg := range msgs {
-			o := &event.CourseCreated{}
-			if err := json.Unmarshal(msg.Body, o); err != nil {
-				msg.Nack(false, true)
-				logger.Error("Failed to unmarshal message: %s\n", err)
-				continue
-			}
-			fmt.Println(fmt.Sprintf("Received a message: %s", o.Name))
-		} 
-	}()
+	orderCreatedConsumer := HandleOrderCreated.NewOrderCreatedConsumer(logger)
+	if err := orderCreatedConsumer.Start(ctx, rmq.Channel); err != nil {
+		logger.Error("Failed to start order created consumer", "error", err)
+		os.Exit(1)
+	}
 
-	logger.Info("Waiting for messages...")
-	<-forever
+	courseCreatedConsumer2 := HandleCourseCreated2.NewCourseCreatedConsumer(logger)
+	if err := courseCreatedConsumer2.Start(ctx, rmq.Channel); err != nil {
+		logger.Error("Failed to start course created2 consumer", "error", err)
+		os.Exit(1)
+	}
 
+	logger.Info("Service started. Press CTRL+C to exit")
+
+	// Wait for interrupt signal
+	<-ctx.Done()
+	logger.Info("Shutting down gracefully")
 }

@@ -5,34 +5,53 @@ import (
 	"fmt"
 
 	"github.com/streadway/amqp"
+	ext "learn123.core/extensions"
+
 )
 
-
 type EventPublisher struct {
-	exchange    string
-	routingKey  string
-	amqpChannel *amqp.Channel
+	channel *amqp.Channel
 }
 
-func NewEventPublisher(amqpChannel *amqp.Channel) *EventPublisher {
+func NewEventPublisher(ch *amqp.Channel) *EventPublisher {
+	// Declare the topic exchange
+	err := ch.ExchangeDeclare(
+		"learn123", // exchange name
+		"topic",    // exchange type
+		true,       // durable
+		false,      // auto-deleted
+		false,      // internal
+		false,      // no-wait
+		nil,        // arguments
+	)
+	if err != nil {
+		return nil
+	}
+
 	return &EventPublisher{
-		exchange:    "learn123",
-		routingKey:  "",
-		amqpChannel: amqpChannel,
+		channel: ch,
 	}
 }
 
-func (e *EventPublisher) Publish(event interface{}) {
-	jsonEvent, _ := json.Marshal(event)
-	_ = e.amqpChannel.Publish(
-		e.exchange, // exchange
-		"",
-		false, // mandatory
-		false, // immediate
+func (p *EventPublisher) Publish(event interface{}) error {
+	// Get the type name and use it as routing key
+	// Convert type name to routing key format
+	// e.g., "CourseCreated" -> "learn123.CourseCreated"
+	routingKey := fmt.Sprintf("learn123.%s", ext.GetType(&event))
+
+	body, err := json.Marshal(event)
+	if err != nil {
+		return err
+	}
+
+	return p.channel.Publish(
+		"learn123", // exchange
+		routingKey, // routing key
+		false,      // mandatory
+		false,      // immediate
 		amqp.Publishing{
 			ContentType: "application/json",
-			Body:        jsonEvent,
+			Body:        body,
 		},
 	)
-	fmt.Println(fmt.Sprintf("Event published: %s", jsonEvent))
 }

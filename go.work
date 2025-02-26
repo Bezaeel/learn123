@@ -7,5 +7,6 @@ use (
 	./src/learn123.events
 	./src/learn123.infrastructure
 	./src/learn123.Subscriber
+	./src/learn123.core
 	./tests
 )
