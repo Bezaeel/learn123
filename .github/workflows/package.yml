@@ -1,0 +1,41 @@
+name: Publish Event Package
+
+on:
+  workflow_call:
+    inputs:
+      go-version:
+        required: true
+        type: string
+
+jobs:
+  publish-event-package:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: ${{ inputs.go-version }}
+
+    - name: Set Version Variables
+      id: set-version
+      run: |
+        echo "::set-output name=major::1"
+        echo "::set-output name=minor::2"
+        echo "::set-output name=patch::$(($(git tag | grep -E '^v1\.2\.[0-9]+$' | sed 's/v1\.2\.//' | sort -n | tail -n 1 || echo -1) + 1))"
+        echo "::set-output name=version::v1.2.${{ steps.set-version.outputs.patch }}"
+
+    - name: Publish Event Package
+      run: |
+        cd src/learn123.events
+        go mod tidy
+        go build
+        git tag -a ${{ steps.set-version.outputs.version }} -m "New version of event package: ${{ steps.set-version.outputs.version }}"
+        git push origin --tags
+
+    - name: Output Version
+      run: |
+        echo "Published version: ${{ steps.set-version.outputs.version }}"

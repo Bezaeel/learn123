@@ -1,4 +1,4 @@
-package HandleCourseCreated2
+package handleCourseCreated2
 
 import (
 	"context"

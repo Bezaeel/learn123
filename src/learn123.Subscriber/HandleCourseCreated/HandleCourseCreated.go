@@ -1,4 +1,4 @@
-package HandleCourseCreated
+package handleCourseCreated
 
 import (
 	"context"
@@ -16,11 +16,12 @@ type CourseCreatedConsumer struct {
 }
 
 func NewCourseCreatedConsumer(logger *slog.Logger) *CourseCreatedConsumer {
+	// routingKey := fmt.Sprintf("learn123.%s", ext.GetType(&event.CourseCreated{}))
 	return &CourseCreatedConsumer{
 		base: rmq.NewBaseEventConsumer[event.CourseCreated](
 			"learn123.CourseCreated",
 			"learn123",
-			"learn123.CourseCreated",
+			"",
 			logger,
 		),
 		logger: logger,

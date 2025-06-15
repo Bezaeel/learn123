@@ -21,6 +21,7 @@ func NewCourseController(app *fiber.App, _courseService ICourseService) {
 }
 
 func (c *CourseController) Ask() {
+	c.router.Use()
 	c.router.Get("/api/v1/ask", func(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusOK).JSON("Ask Talabi..")
 	})

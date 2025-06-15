@@ -1,4 +1,4 @@
-package HandleOrderCreated
+package handleOrderCreated
 
 import (
 	"context"

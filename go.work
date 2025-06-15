@@ -5,8 +5,9 @@ use (
 	./src/learn123.api.client
 	./src/learn123.datamigrator
 	./src/learn123.events
+	./src/learn123.core
 	./src/learn123.infrastructure
 	./src/learn123.Subscriber
-	./src/learn123.core
+	./src/learn123.Subscriber2
 	./tests
 )

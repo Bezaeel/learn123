@@ -13,7 +13,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
 
-	ext "learn123.api/common/extensions"
+	ext "learn123.core/extensions"
 	"learn123.api/modules/course"
 )
 

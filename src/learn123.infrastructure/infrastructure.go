@@ -1,7 +1,7 @@
 package learn123infrastructure
 
 import (
-	ext "learn123.api/common/extensions"
+	ext "learn123.core/extensions"
 	"learn123.infrastructure/database"
 	"learn123.infrastructure/rmq"
 )
