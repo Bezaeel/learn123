@@ -1,21 +1,28 @@
 package learn123infrastructure
 
 import (
-	_ "github.com/joho/godotenv/autoload"
-	ext "learn123.api/common/extensions"
+	"log"
+	"os"
+
+	ext "learn123.core/extensions"
 	"learn123.infrastructure/database"
+	"learn123.infrastructure/rmq"
 )
 
-var (
-	dbUser = ext.EnvString("DB_USER", "")
-	dbPass = ext.EnvString("DB_PASS", "")
-	dbHost = ext.EnvString("DB_HOST", "")
-	dbPort = ext.EnvString("DB_PORT", "")
-	dbName = ext.EnvString("DB_NAME", "")
-)
+func AddInfrastucture(config *ext.Config) {
+	var cfg ext.Config
+	if config == nil {
+		var err error
+		cfg, err = ext.LoadConfig()
+		if err != nil {
+			log.Fatalf("cannot load config: %v", err)
+			os.Exit(1)
+		}
+	} else {
+		cfg = *config
+	}
 
-func AddInfrastucture() {
-
-	// wire infra dependencies
-	database.ConnectToDB(dbUser, dbPass, dbHost, dbPort, dbName)
+	// Wire infra dependencies
+	database.ConnectToDB(cfg.DBUser, cfg.DBPassword, cfg.DBHost, cfg.DBPort, cfg.DBName)
+	rmq.ConnectAmqp()
 }

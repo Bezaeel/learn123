@@ -1,9 +1,12 @@
 package course
 
 import (
+	"log/slog"
+
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
+	"learn123.api/common"
 	ext "learn123.api/common/extensions"
 )
 
@@ -14,6 +17,8 @@ type ICourseService interface {
 
 type CourseService struct {
 	dbContext *gorm.DB
+	publisher common.IEventPublisher
+	logger    *slog.Logger
 }
 
 func (service *CourseService) CreateCourse(command *CreateCourseCommand) ext.Result[*CourseEntity] {
@@ -22,7 +27,10 @@ func (service *CourseService) CreateCourse(command *CreateCourseCommand) ext.Res
 		return ext.Result[*CourseEntity]{Err: result.Error}
 	}
 
-	// publish CourseCreated event
+	event := command.ToEvent("test")
+	service.publisher.Publish("CourseCreated", event)
+	service.publisher.Publish("OrderCreated", command.ToOrderEvent("test2"))
+
 	return ext.Result[*CourseEntity]{Value: command.ToEntity()}
 }
 
@@ -40,8 +48,9 @@ func (service *CourseService) UpdateCourse(id uuid.UUID, command *UpdateCourseCo
 	return ext.Result[*CourseEntity]{Value: &result}
 }
 
-func NewCourseService(dbContext *gorm.DB) *CourseService {
+func NewCourseService(dbContext *gorm.DB, publisher common.IEventPublisher) *CourseService {
 	return &CourseService{
 		dbContext: dbContext,
+		publisher: publisher,
 	}
 }

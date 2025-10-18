@@ -13,7 +13,7 @@ import (
 var migrationPath = "./src/learn123.infrastructure/database/migrations"
 
 func main() {
-	infra.AddInfrastucture()
+	infra.AddInfrastucture(nil)
 	fmt.Println("Running migration...")
 
 	// Read migration files from the directory

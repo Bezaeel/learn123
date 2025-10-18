@@ -1,0 +1,27 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    uses: ./.github/workflows/build-and-test.yml
+    with:
+      go-version: '1.22'
+
+  run-data-migrator:
+    needs: build-and-test
+    uses: ./.github/workflows/run-data-migrator.yml
+    with:
+      go-version: '1.22'
+
+  publish-event-package:
+    needs: run-data-migrator
+    uses: ./.github/workflows/publish-event-package.yml
+    with:
+      go-version: '1.22'

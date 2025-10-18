@@ -12,7 +12,7 @@ type CourseController struct {
 
 func NewCourseController(app *fiber.App, _courseService ICourseService) {
 	controller := &CourseController{
-		router:        app.Group("/api/course/v1"),
+		router:        app.Group("/api/v1/course"),
 		courseService: _courseService,
 	}
 
