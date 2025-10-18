@@ -1,4 +1,4 @@
-package handleCourseCreated2
+package handlers
 
 import (
 	"context"
@@ -10,13 +10,13 @@ import (
 	event "learn123.events"
 )
 
-type CourseCreatedConsumer struct {
+type CourseCreatedConsumer2 struct {
 	base   *rmq.BaseEventConsumer[event.CourseCreated]
 	logger *slog.Logger
 }
 
-func NewCourseCreatedConsumer(logger *slog.Logger) *CourseCreatedConsumer {
-	return &CourseCreatedConsumer{
+func NewCourseCreatedConsumer2(logger *slog.Logger) *CourseCreatedConsumer2 {
+	return &CourseCreatedConsumer2{
 		base: rmq.NewBaseEventConsumer[event.CourseCreated](
 			"learn123.CourseCreated.subscriber2",
 			"learn123",
@@ -27,12 +27,12 @@ func NewCourseCreatedConsumer(logger *slog.Logger) *CourseCreatedConsumer {
 	}
 }
 
-func (c *CourseCreatedConsumer) ProcessMessage(ctx context.Context, message event.CourseCreated) error {
-	c.logger.Info("Subscriber 2: Processing course created event", "courseName", message.Name)
+func (c *CourseCreatedConsumer2) ProcessMessage(ctx context.Context, message event.CourseCreated) error {
+	c.logger.Info("Subscriber: Processing course 2 created event", "courseName", message.Name)
 	// Add your business logic here
 	return nil
 }
 
-func (c *CourseCreatedConsumer) Start(ctx context.Context, ch *amqp.Channel) error {
+func (c *CourseCreatedConsumer2) Start(ctx context.Context, ch *amqp.Channel) error {
 	return c.base.Start(ctx, ch, c)
 }

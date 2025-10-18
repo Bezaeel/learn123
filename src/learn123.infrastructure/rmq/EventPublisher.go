@@ -5,8 +5,6 @@ import (
 	"fmt"
 
 	"github.com/streadway/amqp"
-	ext "learn123.core/extensions"
-
 )
 
 type EventPublisher struct {
@@ -33,16 +31,15 @@ func NewEventPublisher(ch *amqp.Channel) *EventPublisher {
 	}
 }
 
-func (p *EventPublisher) Publish(event interface{}) error {
-	// Get the type name and use it as routing key
-	// Convert type name to routing key format
-	// e.g., "CourseCreated" -> "learn123.CourseCreated"
-	routingKey := fmt.Sprintf("learn123.%s", ext.GetType(&event))
+func (p *EventPublisher) Publish(eventType string, event interface{}) error {
+	// Use the provided eventType as routing key
+	routingKey := fmt.Sprintf("learn123.%s", eventType)
 
 	body, err := json.Marshal(event)
 	if err != nil {
 		return err
 	}
+	fmt.Printf("Publishing event %v, %v", routingKey, string(body))
 
 	return p.channel.Publish(
 		"learn123", // exchange

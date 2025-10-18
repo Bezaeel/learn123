@@ -11,28 +11,24 @@ import (
 	"learn123.infrastructure/rmq"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/joho/godotenv"
 
-	ext "learn123.core/extensions"
 	"learn123.api/modules/course"
+	ext "learn123.core/extensions"
 )
 
 func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	slog.SetDefault(logger)
 
-	// Load .env file
-	curDir, err := os.Getwd()
+	// Load configuration
+	cfg, err := ext.LoadConfig()
 	if err != nil {
-		log.Println(err)
-	}
-	loadErr := godotenv.Load(curDir + "/.env")
-	if loadErr != nil {
-		log.Fatalln("can't load env file from current directory: " + curDir)
+		log.Fatalf("cannot load config: %v", err)
+		os.Exit(1)
 	}
 
-	var port = ext.EnvString("PORT", ":8000")
-	infra.AddInfrastucture()
+	var port = cfg.ServerPort
+	infra.AddInfrastucture(&cfg)
 
 	apiHttpServer := NewAPIServer()
 	app := apiHttpServer.App()
@@ -46,18 +42,5 @@ func main() {
 	})
 
 	logger.Info(fmt.Sprintf("starting app on port %v", port))
-	logger.Error(app.Listen(port).Error())
-}
-
-func GetAllEnvKeys() ([]string, error) {
-	envMap, err := godotenv.Read()
-	if err != nil {
-		return nil, err
-	}
-
-	keys := make([]string, 0, len(envMap))
-	for key := range envMap {
-		keys = append(keys, key)
-	}
-	return keys, nil
+	logger.Error(app.Listen(fmt.Sprintf(":%v", port)).Error())
 }

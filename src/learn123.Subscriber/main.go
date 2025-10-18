@@ -6,10 +6,9 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+
 	"learn123.infrastructure/rmq"
-	"learn123.subscriber/handleCourseCreated"
-	"learn123.subscriber/handleCourseCreated2"
-	"learn123.subscriber/handleOrderCreated"
+	"learn123.subscriber/handlers"
 )
 
 func main() {
@@ -23,19 +22,19 @@ func main() {
 	defer stop()
 
 	// Initialize and start consumers
-	courseCreatedConsumer := handleCourseCreated.NewCourseCreatedConsumer(logger)
+	courseCreatedConsumer := handlers.NewCourseCreatedConsumer(logger)
 	if err := courseCreatedConsumer.Start(ctx, rmq.Channel); err != nil {
 		logger.Error("Failed to start course created consumer", "error", err)
 		os.Exit(1)
 	}
 
-	orderCreatedConsumer := handleOrderCreated.NewOrderCreatedConsumer(logger)
+	orderCreatedConsumer := handlers.NewOrderCreatedConsumer(logger)
 	if err := orderCreatedConsumer.Start(ctx, rmq.Channel); err != nil {
 		logger.Error("Failed to start order created consumer", "error", err)
 		os.Exit(1)
 	}
 
-	courseCreatedConsumer2 := handleCourseCreated2.NewCourseCreatedConsumer(logger)
+	courseCreatedConsumer2 := handlers.NewCourseCreatedConsumer2(logger)
 	if err := courseCreatedConsumer2.Start(ctx, rmq.Channel); err != nil {
 		logger.Error("Failed to start course created2 consumer", "error", err)
 		os.Exit(1)

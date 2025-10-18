@@ -1,5 +1,5 @@
 package common
 
 type IEventPublisher interface {
-	Publish(event interface{}) error
+	Publish(eventType string, event interface{}) error
 }

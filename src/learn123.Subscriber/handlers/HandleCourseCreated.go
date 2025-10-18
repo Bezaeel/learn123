@@ -1,4 +1,4 @@
-package handleCourseCreated
+package handlers
 
 import (
 	"context"
@@ -21,7 +21,7 @@ func NewCourseCreatedConsumer(logger *slog.Logger) *CourseCreatedConsumer {
 		base: rmq.NewBaseEventConsumer[event.CourseCreated](
 			"learn123.CourseCreated",
 			"learn123",
-			"",
+			"learn123.CourseCreated",
 			logger,
 		),
 		logger: logger,

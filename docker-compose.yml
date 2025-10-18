@@ -1,0 +1,22 @@
+version: '3.7'
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=learn123
+      - POSTGRES_USER=learn123
+      - POSTGRES_DB=learn123
+    volumes:
+      - /Users/talabi/shared-volume/postgres:/usr/share/postgresql/data
+  rabbitmq:
+    image: rabbitmq:management
+    volumes:
+      - /Users/talabi/shared-volume/rabbitmq:/usr/share/rabbitmq/data
+    ports:
+      - 15672:15672
+      - 5672:5672
+    restart: unless-stopped

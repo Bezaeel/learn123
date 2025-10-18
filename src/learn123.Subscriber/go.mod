@@ -1,5 +1,5 @@
 module learn123.subscriber
 
-go 1.22.4
+go 1.23.0
 
-require github.com/rabbitmq/amqp091-go v1.10.0 // indirect
+require github.com/streadway/amqp v1.1.0

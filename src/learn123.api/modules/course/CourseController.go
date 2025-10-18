@@ -12,7 +12,7 @@ type CourseController struct {
 
 func NewCourseController(app *fiber.App, _courseService ICourseService) {
 	controller := &CourseController{
-		router:        app.Group("/api/course/v1"),
+		router:        app.Group("/api/v1/course"),
 		courseService: _courseService,
 	}
 
@@ -21,7 +21,6 @@ func NewCourseController(app *fiber.App, _courseService ICourseService) {
 }
 
 func (c *CourseController) Ask() {
-	c.router.Use()
 	c.router.Get("/api/v1/ask", func(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusOK).JSON("Ask Talabi..")
 	})

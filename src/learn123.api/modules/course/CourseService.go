@@ -18,7 +18,7 @@ type ICourseService interface {
 type CourseService struct {
 	dbContext *gorm.DB
 	publisher common.IEventPublisher
-	logger 	*slog.Logger
+	logger    *slog.Logger
 }
 
 func (service *CourseService) CreateCourse(command *CreateCourseCommand) ext.Result[*CourseEntity] {
@@ -28,8 +28,8 @@ func (service *CourseService) CreateCourse(command *CreateCourseCommand) ext.Res
 	}
 
 	event := command.ToEvent("test")
-	service.publisher.Publish(event)
-	service.publisher.Publish(command.ToOrderEvent("test2"))
+	service.publisher.Publish("CourseCreated", event)
+	service.publisher.Publish("OrderCreated", command.ToOrderEvent("test2"))
 
 	return ext.Result[*CourseEntity]{Value: command.ToEntity()}
 }
